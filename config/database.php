@@ -82,6 +82,26 @@ return [
             ]) : [],
         ],
 
+        'mariadb_kuma' => [
+            'driver' => 'mariadb',
+            'url' => env('DB_KUMA_URL'),
+            'host' => env('DB_KUMA_HOST', '127.0.0.1'),
+            'port' => env('DB_KUMA_PORT', '3306'),
+            'database' => env('DB_KUMA_DATABASE', 'laravel'),
+            'username' => env('DB_KUMA_USERNAME', 'root'),
+            'password' => env('DB_KUMA_PASSWORD', ''),
+            'unix_socket' => env('DB_KUMA_SOCKET', ''),
+            'charset' => env('DB_KUMA_CHARSET', 'utf8mb4'),
+            'collation' => env('DB_KUMA_COLLATION', 'utf8mb4_unicode_ci'),
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'strict' => true,
+            'engine' => null,
+            'options' => extension_loaded('pdo_mysql') ? array_filter([
+                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+            ]) : [],
+        ],
+
         'pgsql' => [
             'driver' => 'pgsql',
             'url' => env('DB_URL'),
