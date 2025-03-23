@@ -8,10 +8,17 @@ class Monitor extends Model
 {
     protected $table = 'monitor';
 
-    protected $connection = 'mysql_kuma';
+    protected $connection = 'mariadb_kuma';
+
     protected $fillable = [
         'name',
         'url',
-        'status'
+        'interval',
+        'url',
+        'type',
+        'push_token',
+        'active',
+        'user_id',
+        'interval',
     ];
 }

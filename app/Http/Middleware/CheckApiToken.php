@@ -17,7 +17,7 @@ class CheckApiToken
     {
         $token = $request->bearerToken();
 
-        if (!$token || $token !== env('API_TOKEN')) {
+        if (!$token || $token !== env('KUMA_API_TOKEN')) {
             return response()->json(['message' => 'Unauthorized'], 401);
         }
 

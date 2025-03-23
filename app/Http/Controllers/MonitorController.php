@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreMonitorRequest;
 use App\Models\Monitor;
 use Illuminate\Http\Request;
 
@@ -19,19 +20,15 @@ class MonitorController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreMonitorRequest $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'url' => 'required|url|max:255',
-            'status' => 'sometimes|string|in:active,inactive',
-        ]);
+        $default = [
+            'active' => env('KUMA_ACTIVE', 1),
+            'user_id' => env('KUMA_USER_ID', 1),
+            'interval' => env('KUMA_INTERVAL', 60),
+        ];
 
-        $monitor = Monitor::create([
-            'name' => $validated['name'],
-            'url' => $validated['url'],
-            'status' => $validated['status'] ?? 'active',
-        ]);
+        $monitor = Monitor::create(array_merge($default, $request->toArray()));
 
         return response()->json(['data' => $monitor], 201);
     }
