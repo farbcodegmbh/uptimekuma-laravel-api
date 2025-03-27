@@ -49,7 +49,6 @@ class MonitorController extends Controller
         $validated = $request->validate([
             'name' => 'sometimes|string|max:255',
             'url' => 'sometimes|url|max:255',
-            'status' => 'sometimes|string|in:active,inactive',
         ]);
 
         $monitor->update($validated);
@@ -62,8 +61,7 @@ class MonitorController extends Controller
      */
     public function destroy(Monitor $monitor)
     {
-        $monitor->delete();
-
+        //$monitor->delete();
         return response()->json(null, 204);
     }
 }
