@@ -10,6 +10,8 @@ class Monitor extends Model
 
     protected $connection = 'mariadb_kuma';
 
+    public $timestamps = false;
+
     protected $fillable = [
         'name',
         'url',
