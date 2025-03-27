@@ -12,8 +12,9 @@ class StoreMonitorRequest extends FormRequest
             'name' => 'required|string|max:255',
             'interval' => 'sometimes|integer|min:1',
             'url' => 'sometimes|url|max:255',
-            'type' => 'required|string|in:http,push',
+            'type' => 'required|string|in:http,push,group',
             'push_token' => 'required_if:type,push|string|max:32',
+            'parent' => 'sometimes|integer',
         ];
     }
 }

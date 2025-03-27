@@ -11,9 +11,17 @@ class MonitorController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $monitors = Monitor::all();
+        $query = Monitor::query();
+
+        /* Simple Filter */
+        if ($request->type) $query->where('type', $request->type);
+        if ($request->name) $query->where('name', $request->name);
+        if ($request->url) $query->where('url', $request->url);
+
+        $monitors = $query->get();
+
         return response()->json(['data' => $monitors]);
     }
 
@@ -23,9 +31,10 @@ class MonitorController extends Controller
     public function store(StoreMonitorRequest $request)
     {
         $default = [
-            'active' => env('KUMA_ACTIVE', 1),
-            'user_id' => env('KUMA_USER_ID', 1),
-            'interval' => env('KUMA_INTERVAL', 60),
+            'active' => config('uptimekuma.active'),
+            'user_id' => config('uptimekuma.user_id'),
+            'interval' => config('uptimekuma.interval'),
+            'expiryNotification' => true
         ];
 
         $monitor = Monitor::create(array_merge($default, $request->toArray()));

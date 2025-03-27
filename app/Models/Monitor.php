@@ -21,6 +21,6 @@ class Monitor extends Model
         'push_token',
         'active',
         'user_id',
-        'interval',
+        'parent'
     ];
 }
