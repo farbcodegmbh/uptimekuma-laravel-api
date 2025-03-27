@@ -22,7 +22,7 @@ class MonitorController extends Controller
 
         $monitors = $query->get();
 
-        return response()->json(['data' => $monitors]);
+        return response()->json($monitors);
     }
 
     /**
@@ -39,7 +39,7 @@ class MonitorController extends Controller
 
         $monitor = Monitor::create(array_merge($default, $request->toArray()));
 
-        return response()->json(['data' => $monitor], 201);
+        return response()->json($monitor, 201);
     }
 
     /**
@@ -47,7 +47,7 @@ class MonitorController extends Controller
      */
     public function show(Monitor $monitor)
     {
-        return response()->json(['data' => $monitor]);
+        return response()->json($monitor);
     }
 
     /**
@@ -62,7 +62,7 @@ class MonitorController extends Controller
 
         $monitor->update($validated);
 
-        return response()->json(['data' => $monitor]);
+        return response()->json($monitor);
     }
 
     /**
