@@ -13,12 +13,7 @@ class StoreMonitorRequest extends FormRequest
             'interval' => 'sometimes|integer|min:1',
             'url' => 'sometimes|url|max:255',
             'type' => 'required|string|in:http,push',
-            'push_token' => 'sometimes|string|max:32',
+            'push_token' => 'required_if:type,push|string|max:32',
         ];
-    }
-
-    public function authorize(): bool
-    {
-        return true;
     }
 }
