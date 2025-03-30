@@ -23,4 +23,10 @@ class Monitor extends Model
         'user_id',
         'parent'
     ];
+
+
+    public function notifications()
+    {
+        return $this->hasMany(MonitorNotifications::class, 'monitor_id', 'id');
+    }
 }

@@ -39,6 +39,14 @@ class MonitorController extends Controller
 
         $monitor = Monitor::create(array_merge($default, $request->toArray()));
 
+        // add notifications
+        $payload = array_map(function ($id) {
+            return ['notification_id' => $id];
+        }, config('uptimekuma.notifications'));
+
+        $monitor->notifications()->createMany($payload);
+
+
         return response()->json($monitor, 201);
     }
 

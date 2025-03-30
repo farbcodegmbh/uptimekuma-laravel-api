@@ -16,4 +16,9 @@ class MonitorNotifications extends Model
         'monitor_id',
         'notification_id',
     ];
+
+    public function monitor()
+    {
+        return $this->belongsTo(Monitor::class, 'monitor_id', 'id');
+    }
 }
