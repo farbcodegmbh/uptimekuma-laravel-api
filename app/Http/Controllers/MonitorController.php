@@ -34,6 +34,10 @@ class MonitorController extends Controller
             'active' => config('uptimekuma.active'),
             'user_id' => config('uptimekuma.user_id'),
             'interval' => config('uptimekuma.interval'),
+            'retry_interval' => config('uptimekuma.retry_interval'),
+            'json_path'=> '$',
+            'json_path_operator'=> '==',
+            'timeout' => config('uptimekuma.timeout'),
             'expiryNotification' => true
         ];
 

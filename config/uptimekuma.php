@@ -16,6 +16,10 @@ return [
 
     'interval' => env('KUMA_INTERVAL', 60),
 
+    'retry_interval' => env('KUMA_RETRY_INTERVAL', 60),
+
+    'timeout' => env('KUMA_TIMEOUT', 48),
+
     'token' => env('KUMA_API_TOKEN', ''),
 
     'notifications' => explode(',', env('KUMA_NOTIFICATIONS', '')),
