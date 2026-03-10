@@ -1,7 +1,7 @@
 FROM php:8.4-cli
 
 # System-Abhängigkeiten (für Composer und Laravel nötig)
-RUN apt-get update && apt-get install -y libzip-dev zip unzip && docker-php-ext-install pdo_mysql zip
+RUN apt-get update && apt-get install -y nano libzip-dev zip unzip && docker-php-ext-install pdo_mysql zip && rm -rf /var/lib/apt/lists/*
 
 # Composer direkt aus dem offiziellen Image kopieren
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
