@@ -1,66 +1,150 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Uptime Kuma REST Adapter
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Small API adapter for **Uptime Kuma** that allows monitors to be created via a simple REST interface.
 
-## About Laravel
+Instead of using the internal WebSocket API, this service **writes directly to the Uptime Kuma database**.
+It is intended for lightweight automation scenarios where systems should be able to create monitors via HTTP.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Note: This project is intentionally **quick and dirty**.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+---
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+# Installation
 
-## Learning Laravel
+## Classic Installation
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+Requirements
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+* PHP 8.3+
+* Composer
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Clone the repository
 
-## Laravel Sponsors
+```bash
+git clone https://github.com/farbcodegmbh/uptimekuma-laravel-api.git
+cd <repo>
+```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+Install dependencies
 
-### Premium Partners
+```bash
+composer install
+```
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+Create environment file
 
-## Contributing
+```bash
+cp .env.example .env
+php artisan key:generate
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Start the server
 
-## Code of Conduct
+```bash
+php artisan serve
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+API will be available at
 
-## Security Vulnerabilities
+```
+http://localhost:8000
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+---
 
-## License
+## Docker Installation
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Run the adapter as a container.
+
+```yaml
+services:
+    kuma-api:
+        image: ghcr.io/<org>/<image>:latest
+        ports:
+            - "8000:8000"
+        environment:
+            APP_ENV: production
+            APP_KEY: base64:YOUR_KEY
+            DB_KUMA_HOST: 127.0.0.1
+            DB_KUMA_PORT: 3306
+            DB_KUMA_DATABASE: UPTIMEKUMA_DATABASE
+            DB_KUMA_USERNAME: UPTIMEKUMA_DATABASE_USER
+            DB_KUMA_PASSWORD: UPTIMEKUMA_DATABASE_PASSWORD
+            KUMA_API_TOKEN: UPTIMEKUMA_API_TOKEN (for external access to api)
+            KUMA_USER_ID: 1
+            KUMA_ACTIVE: 1
+            KUMA_INTERVAL: 60
+```
+
+Start the container
+
+```bash
+docker compose up -d
+```
+
+---
+
+## Example with Uptime Kuma
+
+The adapter can run together with Uptime Kuma inside the same docker compose.
+
+```yaml
+services:
+    uptime-kuma:
+        image: louislam/uptime-kuma
+        container_name: uptime-kuma
+        volumes:
+            - ./uptime-kuma-data:/app/data
+            - /var/run/docker.sock:/var/run/docker.sock
+        environment:
+            UPTIME_KUMA_DB_TYPE: mariadb
+            UPTIME_KUMA_DB_HOSTNAME: host.docker.internal
+            UPTIME_KUMA_DB_NAME: UPTIMEKUMA_DATABASE
+            UPTIME_KUMA_DB_USERNAME: UPTIMEKUMA_DATABASE_USER
+            UPTIME_KUMA_DB_PASSWORD: UPTIMEKUMA_DATABASE_PASSWORD
+        extra_hosts:
+            - "host.docker.internal:host-gateway"
+        ports:
+            - 3001:3001  # <Host Port>:<Container Port>
+        restart: always
+
+    kuma-api:
+        image: ghcr.io/farbcodegmbh/uptimekuma-laravel-api:latest
+        environment:
+            APP_ENV: production
+            APP_KEY: base64:YOUR_KEY
+            DB_KUMA_HOST: host.docker.internal
+            DB_KUMA_PORT: 3306
+            DB_KUMA_DATABASE: UPTIMEKUMA_DATABASE
+            DB_KUMA_USERNAME: UPTIMEKUMA_DATABASE_USER
+            DB_KUMA_PASSWORD: UPTIMEKUMA_DATABASE_PASSWORD
+            KUMA_API_TOKEN: UPTIMEKUMA_API_TOKEN (for external access to api)
+            KUMA_USER_ID: 1
+            KUMA_ACTIVE: 1
+            KUMA_INTERVAL: 60
+```
+
+---
+
+# Local Docker Test
+
+Build the image
+
+```bash
+docker build -t uptime-kuma-api:local .
+```
+
+Run the container
+
+```bash
+docker run --rm -p 8000:8000 \
+  -e APP_ENV=production \
+  -e APP_KEY=base64:TEST_KEY \
+  uptime-kuma-api:local
+```
+
+API endpoint
+
+```
+http://localhost:8000
+```
